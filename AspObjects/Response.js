@@ -5,7 +5,7 @@ const SkipError = require("../Util/SkipError");
 
 module.exports = class Response {
 
-    constructor(_MapCK, _config, _sourceBytes, _pipe) {
+    constructor(_MapCK, _config, _sourceBytes, _dataCallBack) {
 
         // this.cookies = require("./Cookies");
 
@@ -26,7 +26,7 @@ module.exports = class Response {
         this._Header = new superMap(new Map());
         this._OutputStream = null;                   // Buffer
         this._Flushed = false;
-        this.Pipe = _pipe;
+        this.dataCallBack = _dataCallBack;
         this._Data = [];
     }
 
@@ -208,7 +208,7 @@ module.exports = class Response {
 
             sHeader += "\r\n";
             let buffer = Buffer.from(sHeader);
-            this.Pipe.write(buffer);
+            this.dataCallBack(buffer);
 
             this._Flushed = true;
 
@@ -216,7 +216,7 @@ module.exports = class Response {
 
         if (this._Data.length !== 0) {
             let buffer = Buffer.from(this._Data); 
-            this.Pipe.write(buffer);
+            this.dataCallBack(buffer);
             this.Clear();
         }
 

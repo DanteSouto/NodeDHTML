@@ -48,10 +48,16 @@
     <Content Include="teste.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="teste3.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="testep.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Util\Arquivo.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Util\AsynchronousSocketListener.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Util\Extensions.js">
@@ -64,6 +70,12 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Util\Logger.js" />
+    <Content Include="Util\memorystream.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Util\minimist.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Util\PipeClient.js">
       <SubType>Code</SubType>
     </Content>
@@ -74,6 +86,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Util\SkipError.js" />
+    <Content Include="Util\StateObject.js" />
     <Content Include="Util\SyncNet\Client.js" />
     <Content Include="Util\SyncNet\Server.js" />
     <Content Include="Util\SyncNet\Synket.js" />
@@ -88,6 +101,9 @@
     </Content>
     <Content Include="Util\stringbuilder.js" />
     <Content Include="Util\SuperMap.js" />
+    <Content Include="Workers\BroadCaster.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Workers\Runner.js">
       <SubType>Code</SubType>
     </Content>

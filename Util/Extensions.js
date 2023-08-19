@@ -623,4 +623,20 @@ module.exports = class Extensions {
 
         return true;
     };
+
+    static CheckSum = function (value) {
+    const data = Buffer.from(value, 'utf8');
+    let ret = 0;
+
+    try {
+        ret = data[0];
+        for (let i = 1; i < data.length; i++) {
+            ret ^= data[i];
+        }
+    } catch (ex) {
+        // Trate a exceção aqui, se necessário.
+    }
+
+    return ret;
+}
 }

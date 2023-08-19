@@ -10,6 +10,7 @@ pode enviar dados para o servidor e o servidor pode responder com dados de volta
 */
 
 const net = require('net');
+const Extensions = require('./Extensions');
 
 module.exports = class PipeClient {
     constructor() {
@@ -36,6 +37,9 @@ module.exports = class PipeClient {
     }
 
     write(data) {
+        let size = Extensions.intToByteArray(data.length);
+        let buffer = Extensions.concatWith(size, data);
+        this.client.write(size);
         this.client.write(data);
     }
 
