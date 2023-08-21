@@ -74,51 +74,43 @@ function main() {
     // Start Listener
     listener.startListening('0.0.0.0', parseInt(startOptions.port), (state) => {
         //const result = new Promise((resolve, reject) => {
-            const bytes = state.bytes;
-            const socket = state.workSocket;
-            const worker = new Worker(__filename, {
-                workerData: bytes
-            });
+        const bytes = state.bytes;
+        console.log("bytes[0]=", bytes[0], " length=", bytes.length);
+        const socket = state.workSocket;
+        const worker = new Worker(__filename, {
+            workerData: bytes
+        });
 
-            worker.on('message', data => {
-                if (typeof data === 'string') {
-                    if (data == "END") {
-                        if (socket.writable) {
-                            socket.end();
-                        }
-                        worker.terminate();
+        worker.on('message', data => {
+            if (typeof data === 'string') {
+                if (data == "END") {
+                    if (socket.writable) {
+                        socket.end();
                     }
+                    worker.terminate();
                 } else {
-                    socket.write(data);
+                    console.log(data);
                 }
-            });
+            } else {
+                socket.write(data);
+            }
+        });
 
-            worker.on('error', error => {
-                if (socket.writable) {
-                    socket.end();
-                }
-            });
-            worker.on('close', () => {
-                if (socket.writable) {
-                    socket.end();
-                }
-            });
-            worker.on('exit', code => {
-                if (socket.writable) {
-                    socket.end();
-                }
-                //if (code == 0) {
-                //    resolve(0);
-                //} else {
-                //    reject(new Error(`thread exited whit code ${code}`));
-                //}
-            });
-        //}).then((successMessage) => {
-        //    // nada
-        //    console.log("successMessage ", successMessage);
-        //}).catch((errorMessage) => {
-        //    console.log("errorMessage", errorMessage);
-        //});
+        worker.on('error', error => {
+            if (socket.writable) {
+                socket.end();
+            }
+        });
+        worker.on('close', () => {
+            if (socket.writable) {
+                socket.end();
+            }
+        });
+        worker.on('exit', code => {
+            if (socket.writable) {
+                socket.end();
+            }
+        });
 
     }).then((successMessage) => {
         // Start BroadCaster
@@ -151,12 +143,19 @@ if (isMainThread) {
             ErrorMessage = "Bad Process Request";
             let processRequest = new ProcessRequest();
             const myData = Buffer.from(workerData);
+            parentPort.postMessage("VM bytes[0]=" + myData[0] + " length=" + myData.length);
             processRequest = Extensions.toProcessRequest(myData);
 
             ErrorMessage = "Bad Cookies";
             const mapServerVariables = processRequest.Params;
             const sCookies = Extensions.getValueOrDefault(mapServerVariables, "LSAPP_HTTP_COOKIES", "");
-            const mapCookies = Extensions.getCookies(sCookies);
+            let mapCookies;
+            if (sCookies && sCookies.trim() != "") {
+                mapCookies = Extensions.getCookies(sCookies);
+            }
+            else {
+                mapCookies = new Map();
+            }
 
             ErrorMessage = "Bad Session";
             const sSessionKey = processRequest.SessionKey;
@@ -257,6 +256,15 @@ if (isMainThread) {
 
             sScript = aspParser.Code;
 
+            // remover
+            const fs = require('fs');
+            try {
+                fs.writeFileSync('c:\\Temp\\debug.js', sScript);
+                console.log('Arquivo escrito com sucesso.');
+            } catch (error) {
+                console.error('Ocorreu um erro ao escrever o arquivo:', error);
+            }
+
             ErrorMessage = "Can't Build Response";
 
             if (DEBUG) {
@@ -292,7 +300,7 @@ if (isMainThread) {
             CompileError = ex;
 
         } finally {
-            console.log("ErrorMessage: ", ErrorMessage);
+            
             if (ErrorMessage == "") {
                 try {
                     // TimeOutIdCallBack
@@ -363,6 +371,7 @@ if (isMainThread) {
                     }
                 }
             } else {
+                console.log("ErrorMessage: ", ErrorMessage);
                 try {
                     Response.Clear();
                     Response.Status = 500;
